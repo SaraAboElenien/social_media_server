@@ -15,8 +15,7 @@ export const initApp = (app, express) => {
   const allowedOrigins = [
     'http://localhost:5173', 
     'http://localhost:3000', 
-    // here will be the deployed frontend URL when i deploy it
-    // 'https://my-frontend-domain.com'
+    "https://snapgram-nu-green.vercel.app"
   ];
 
   app.use(cors({
