@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   "/create-post",
   auth(systemRoles.user),
-  uploadImageToCloudinary,
+  uploadImageToCloudinary('postImage'),
   validation(PV.createPostValidationSchema),
   PC.createPost
 );
@@ -20,7 +20,7 @@ router.post(
 router.put(
   "/:id",
   auth(systemRoles.user),
-  uploadImageToCloudinary,
+  uploadImageToCloudinary('postImage'),
   validation(PV.updatePostValidationSchema),
   PC.updatePost
 );
