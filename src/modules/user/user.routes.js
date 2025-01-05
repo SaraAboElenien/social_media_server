@@ -5,7 +5,8 @@ import { validation } from '../../../middlewares/validation.js';
 import * as UV from './user.validation.js';
 const router = express.Router();
 import { systemRoles } from '../../../helpers/systemRoles.js';
-import { uploadImage } from "../../../helpers/cloudinary.js";
+import {uploadImageToCloudinary} from '../../../middlewares/handleUploads.js'
+
 
 router.post('/signup', validation(UV.signupValidationSchema), UC.signUp);
 router.get('/confirmEmail/:token', UC.confirmEmail);
@@ -32,7 +33,7 @@ router.get('/userByID/:id',
 
 router.patch('/updateProfile',
     auth(systemRoles.user),
-      uploadImage('profileImage'),
+  uploadImageToCloudinary,
     UC.updateAccount);
 
 

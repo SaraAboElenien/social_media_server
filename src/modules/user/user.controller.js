@@ -9,8 +9,7 @@ import { AppError } from '../../../helpers/classError.js';
 import path from 'path'
 import fs from 'fs';
 import notificationModel from '../../../db/models/notification.model.js';
-import cloudinary from "../../../helpers/cloudinary.js";
-
+import { cloudinary } from '../../../helpers/cloudinary.js';
 
 const { compare, hash } = bcryptjs;
 const { sign } = jsonwebtoken;

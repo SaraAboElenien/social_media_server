@@ -4,7 +4,6 @@ import * as PV from "./post.validation.js";
 import { validation } from "../../../middlewares/validation.js";
 import { auth } from "../../../middlewares/auth.js";
 import { systemRoles } from "../../../helpers/systemRoles.js";
-import { uploadImage } from "../../../helpers/cloudinary.js";
 import {uploadImageToCloudinary} from '../../../middlewares/handleUploads.js'
 
 const router = express.Router();
@@ -12,7 +11,6 @@ const router = express.Router();
 router.post(
   "/create-post",
   auth(systemRoles.user),
-  uploadImage("postImage"),
   uploadImageToCloudinary,
   validation(PV.createPostValidationSchema),
   PC.createPost
@@ -23,7 +21,6 @@ router.put(
   "/:id",
   auth(systemRoles.user),
   uploadImageToCloudinary,
-  uploadImage("postImage"),
   validation(PV.updatePostValidationSchema),
   PC.updatePost
 );

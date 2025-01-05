@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import { ApiFeatures } from "../../../helpers/ApiFeatures.js";
 import notificationModel from "../../../db/models/notification.model.js";
 import { nanoid } from "nanoid";
-import cloudinary from "../../../helpers/cloudinary.js";
+import { cloudinary } from '../../../helpers/cloudinary.js';
 
 
 //**** Create Post ****//
