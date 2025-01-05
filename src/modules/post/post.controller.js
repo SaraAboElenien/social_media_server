@@ -11,7 +11,6 @@ import cloudinary from "../../../helpers/cloudinary.js";
 
 //**** Create Post ****//
 export const createPost = asyncHandler(async (req, res, next) => {
-  console.log('req.user:', req.user);
   const { description, tags, location } = req.body;
   const userId = req.user._id;
 
@@ -19,14 +18,17 @@ export const createPost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post description is required", 400));
   }
 
-  if (!req.uploadedImage) {
+  if (!req.file) {
     return next(new AppError("Image field is required!", 404));
   }
 
-  const customId = nanoid(5);
-
   try {
-    const { secure_url, public_id } = req.uploadedImage;
+    const customId = nanoid(5);
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      folder: `SocialMedia/Posts/${customId}`,
+    });
+
+    const { secure_url, public_id } = uploadResult;
 
     const newPost = await postModel.create({
       userId,
@@ -67,7 +69,6 @@ export const createPost = asyncHandler(async (req, res, next) => {
 
 
 
-
 //**** Update Post ****//
 export const updatePost = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -78,7 +79,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
- if (description) {
+  if (description) {
     post.description = description;
   }
   if (location) {
@@ -91,7 +92,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
   if (req.file) {
     try {
       if (post.image?.public_id) {
-        await cloudinary.uploader.destroy(post.image.public_id); 
+        await cloudinary.uploader.destroy(post.image.public_id);
       }
 
       const customId = nanoid(5);
@@ -118,9 +119,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     message: "Post updated successfully",
     post: updatedPost,
   });
-});
-
- 
+}); 
 
 
 

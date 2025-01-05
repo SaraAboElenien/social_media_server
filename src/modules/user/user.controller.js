@@ -193,68 +193,67 @@ export const read = (req, res) => {
 
 //=========== Update User Profile ============//
 export const updateAccount = asyncHandler(async (req, res, next) => {
-  const user = req.user;
-  const { firstName, lastName, email, bio } = req.body;
-  const updatedData = {};
-
-  if (firstName) updatedData.firstName = firstName;
-  if (lastName) updatedData.lastName = lastName;
-  if (bio) updatedData.bio = bio;
-
-  if (email) {
+    const user = req.user;
+    const { firstName, lastName, email, bio } = req.body;
+    const updatedData = {};
+  
+    if (firstName) updatedData.firstName = firstName;
+    if (lastName) updatedData.lastName = lastName;
+    if (bio) updatedData.bio = bio;
+  
+    if (email) {
       const emailExists = await userModel.findOne({ email: email.toLowerCase() });
       if (emailExists && emailExists._id.toString() !== user._id.toString()) {
-          return next(new AppError('Email is already in use!', 400));
+        return next(new AppError('Email is already in use!', 400));
       }
       updatedData.email = email.toLowerCase();
-  }
-
-  if (req.file) {
+    }
+  
+    if (req.file) {
       if (user.profileImage && user.profileImage.public_id) {
-          try {
-              await cloudinary.uploader.destroy(user.profileImage.public_id);
-          } catch (error) {
-              console.error('Error deleting old image from Cloudinary:', error.message);
-          }
+        try {
+          await cloudinary.uploader.destroy(user.profileImage.public_id);
+        } catch (error) {
+          console.error('Error deleting old image from Cloudinary:', error.message);
+        }
       }
-
+  
       try {
-          const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-              folder: 'SocialMedia/Users/ProfileImages',
-          });
-          
-          updatedData.profileImage = {
-              secure_url: uploadResult.secure_url,
-              public_id: uploadResult.public_id,
-          };
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'SocialMedia/Users/ProfileImages',
+        });
+  
+        updatedData.profileImage = {
+          secure_url: uploadResult.secure_url,
+          public_id: uploadResult.public_id,
+        };
       } catch (error) {
-          return next(new AppError(`Cloudinary Upload Error: ${error.message}`, 500));
+        return next(new AppError(`Cloudinary Upload Error: ${error.message}`, 500));
       }
-  }
-
-  try {
+    }
+  
+    try {
       const updatedUser = await userModel.findByIdAndUpdate(
-          user._id,
-          updatedData,
-          { new: true, runValidators: true }
+        user._id,
+        updatedData,
+        { new: true, runValidators: true }
       );
-
+  
       if (!updatedUser) {
-          return next(new AppError('User not found!', 404));
+        return next(new AppError('User not found!', 404));
       }
-
+  
       const { password, confirmed, loggedIn, role, ...userDetails } = updatedUser.toObject();
-
+  
       res.status(200).json({
-          message: 'Your account updated successfully <3',
-          user: userDetails,
+        message: 'Your account updated successfully <3',
+        user: userDetails,
       });
-  } catch (error) {
+    } catch (error) {
       return next(new AppError('Failed to update user profile. Please try again.', 500));
-  }
-});
-
-
+    }
+  });
+  
 
 
 //=========== Delete User Account ============//
