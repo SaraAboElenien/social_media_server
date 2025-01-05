@@ -4,7 +4,7 @@ import * as PV from "./post.validation.js";
 import { validation } from "../../../middlewares/validation.js";
 import { auth } from "../../../middlewares/auth.js";
 import { systemRoles } from "../../../helpers/systemRoles.js";
-import { uploadImage } from "../../../helpers/multerLocal.js";
+import { uploadImage } from "../../../helpers/cloudinary.js";
 import {uploadImageToCloudinary} from '../../../middlewares/handleUploads.js'
 
 const router = express.Router();

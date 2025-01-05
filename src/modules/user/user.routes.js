@@ -5,8 +5,7 @@ import { validation } from '../../../middlewares/validation.js';
 import * as UV from './user.validation.js';
 const router = express.Router();
 import { systemRoles } from '../../../helpers/systemRoles.js';
-import { uploadImage } from '../../../helpers/multerLocal.js';
-// import { multerHost } from '../../../helpers/multerLocal.js';
+import { uploadImage } from "../../../helpers/cloudinary.js";
 
 router.post('/signup', validation(UV.signupValidationSchema), UC.signUp);
 router.get('/confirmEmail/:token', UC.confirmEmail);
