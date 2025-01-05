@@ -18,18 +18,10 @@ export const createPost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post description is required", 400));
   }
 
-  if (!req.file) {
-    return next(new AppError("Image field is required!", 404));
-  }
+  const { secure_url, public_id } = req.uploadedImage;
+  const customId = nanoid(5);
 
   try {
-    const customId = nanoid(5);
-    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      folder: `SocialMedia/Posts/${customId}`,
-    });
-
-    const { secure_url, public_id } = uploadResult;
-
     const newPost = await postModel.create({
       userId,
       description,
@@ -44,7 +36,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
     }
 
     const user = await userModel.findById(userId).select("followers");
-    if (user && user.followers.length > 0) {
+    if (user?.followers?.length > 0) {
       const notifications = user.followers.map((followerId) => ({
         receiver: followerId,
         sender: userId,
@@ -61,11 +53,9 @@ export const createPost = asyncHandler(async (req, res, next) => {
       post: newPost,
     });
   } catch (error) {
-    console.error('Cloudinary Upload Error:', error.message);
-    return next(new AppError(`Cloudinary Upload Error: ${error.message}`, 500));
+    next(new AppError(`Error creating post: ${error.message}`, 500));
   }
 });
-
 
 
 
@@ -79,38 +69,24 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  if (description) {
-    post.description = description;
-  }
-  if (location) {
-    post.location = location;
-  }
-  if (tags) {
-    post.tags = tags.split(",").map((tag) => tag.trim());
-  }
+  if (description) post.description = description;
+  if (location) post.location = location;
+  if (tags) post.tags = tags.split(",").map((tag) => tag.trim());
 
-  if (req.file) {
+  if (req.uploadedImage) {
     try {
       if (post.image?.public_id) {
         await cloudinary.uploader.destroy(post.image.public_id);
       }
 
-      const customId = nanoid(5);
-      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-        folder: `SocialMedia/Posts/${customId}`,
-      });
-
-      const { secure_url, public_id } = uploadResult;
-
+      const { secure_url, public_id } = req.uploadedImage;
       post.image = { secure_url, public_id };
     } catch (error) {
-      console.error("Cloudinary Upload Error:", error.message);
-      return next(new AppError(`Cloudinary Upload Error: ${error.message}`, 500));
+      return next(new AppError(`Error updating image: ${error.message}`, 500));
     }
   }
 
   const updatedPost = await post.save();
-
   if (!updatedPost) {
     return next(new AppError("Failed to update post", 500));
   }
@@ -119,9 +95,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     message: "Post updated successfully",
     post: updatedPost,
   });
-}); 
-
-
+});
 
 
 
