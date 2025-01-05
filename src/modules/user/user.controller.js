@@ -62,7 +62,7 @@ export const confirmEmail = async (req, res, next) => {
     if (!user) {
         return next(new AppError("Your email is already confirmed", 400))
     }
-    res.status(200).json({ message: "Your Email got confirmed <3", user });
+    res.status(200).json({ message: "Your Email got confirmed <3"});
 };
 
 
