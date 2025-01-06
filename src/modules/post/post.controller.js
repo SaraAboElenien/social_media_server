@@ -6,10 +6,10 @@ import mongoose from "mongoose";
 import { ApiFeatures } from "../../../helpers/ApiFeatures.js";
 import notificationModel from "../../../db/models/notification.model.js";
 import { nanoid } from "nanoid";
-import { cloudinary } from '../../../helpers/cloudinary.js';
+import cloudinary from '../../../helpers/cloudinary.js';
+import path from 'path';
 
 
-//**** Create Post ****//
 export const createPost = asyncHandler(async (req, res, next) => {
   const { description, tags, location } = req.body;
   const userId = req.user._id;
@@ -18,15 +18,21 @@ export const createPost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post description is required", 400));
   }
 
+  // Validate uploaded image
+  if (!req.uploadedImage) {
+    return next(new AppError("Image upload failed", 400));
+  }
+
   const { secure_url, public_id } = req.uploadedImage;
   const customId = nanoid(5);
 
   try {
+    // Create the post
     const newPost = await postModel.create({
       userId,
       description,
       image: { secure_url, public_id },
-      customId,
+      customId, 
       tags: tags ? tags.split(",").map((tag) => tag.trim()) : [],
       location: location || "",
     });
@@ -35,6 +41,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
       return next(new AppError("Failed to create post", 500));
     }
 
+    // Fetch followers for notifications
     const user = await userModel.findById(userId).select("followers");
     if (user?.followers?.length > 0) {
       const notifications = user.followers.map((followerId) => ({
@@ -45,7 +52,10 @@ export const createPost = asyncHandler(async (req, res, next) => {
         postId: newPost._id,
       }));
 
-      await notificationModel.insertMany(notifications);
+      // Asynchronously insert notifications
+      notificationModel.insertMany(notifications).catch((error) => {
+        console.error("Error creating notifications:", error.message);
+      });
     }
 
     res.status(201).json({
@@ -56,8 +66,6 @@ export const createPost = asyncHandler(async (req, res, next) => {
     next(new AppError(`Error creating post: ${error.message}`, 500));
   }
 });
-
-
 
 //**** Update Post ****//
 export const updatePost = asyncHandler(async (req, res, next) => {

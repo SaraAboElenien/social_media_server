@@ -28,6 +28,8 @@
 import multer from "multer";
 import { v2 as cloudinary } from 'cloudinary';
 import { nanoid } from 'nanoid';
+import path from "path";
+
 
 const multerFileFilter = (req, file, cb) => {
   const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];

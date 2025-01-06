@@ -21,7 +21,7 @@ export const createPostValidationSchema = {
         'string.pattern.base': 'Tags must be comma-separated words',
       }),
   }),
-  file: generalField.file,
+  // file: generalField.file,
   headers: generalField.headers.required(),
 };
 
@@ -30,7 +30,7 @@ export const updatePostValidationSchema = {
   body:joi.object({
       description:joi.string().min(1).max(500).optional()
   }) ,
-  file: generalField.file,
+  // file: generalField.file,
   headers: generalField.headers.required()
 }  
 
