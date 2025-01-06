@@ -28,7 +28,9 @@ export const createPostValidationSchema = {
 
 export const updatePostValidationSchema = {
   body:joi.object({
-      description:joi.string().min(1).max(500).optional()
+      description:joi.string().min(1).max(500).optional(),
+      location:joi.string().max(100).optional(),
+      tags:joi.string().optional(),
   }) ,
   // file: generalField.file,
   headers: generalField.headers.required()
