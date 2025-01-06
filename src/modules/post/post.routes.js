@@ -4,23 +4,24 @@ import * as PV from "./post.validation.js";
 import { validation } from "../../../middlewares/validation.js";
 import { auth } from "../../../middlewares/auth.js";
 import { systemRoles } from "../../../helpers/systemRoles.js";
-import {uploadImageToCloudinary} from '../../../middlewares/handleUploads.js'
-
+import { handleCloudinaryUpload } from "../../../helpers/multerLocal.js";
+import { uploadImage } from "../../../helpers/multerLocal.js";
 const router = express.Router();
 // create post
 router.post(
   "/create-post",
   auth(systemRoles.user),
-  uploadImageToCloudinary('postImage'),
+  uploadImage('postImage'),
+  handleCloudinaryUpload,
   validation(PV.createPostValidationSchema),
   PC.createPost
 );
-
 // update post
 router.put(
   "/:id",
   auth(systemRoles.user),
-  uploadImageToCloudinary('postImage'),
+  uploadImage('postImage'),
+  handleCloudinaryUpload,
   validation(PV.updatePostValidationSchema),
   PC.updatePost
 );

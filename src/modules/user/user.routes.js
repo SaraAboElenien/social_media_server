@@ -5,7 +5,8 @@ import { validation } from '../../../middlewares/validation.js';
 import * as UV from './user.validation.js';
 const router = express.Router();
 import { systemRoles } from '../../../helpers/systemRoles.js';
-import {uploadImageToCloudinary} from '../../../middlewares/handleUploads.js'
+import { handleCloudinaryUpload } from "../../../helpers/multerLocal.js";
+import { uploadImage } from "../../../helpers/multerLocal.js";
 
 
 router.post('/signup', validation(UV.signupValidationSchema), UC.signUp);
@@ -33,7 +34,8 @@ router.get('/userByID/:id',
 
 router.patch('/updateProfile',
     auth(systemRoles.user),
-  uploadImageToCloudinary,
+    uploadImage('profileImage'),
+    handleCloudinaryUpload,
     UC.updateAccount);
 
 
