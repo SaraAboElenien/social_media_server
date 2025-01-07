@@ -5,7 +5,6 @@ import { deleteFromCloudinary } from '../helpers/deleteFromCloudinary.js'
 import { deleteFromDB } from '../helpers/deleteFromDB.js'
 import * as routers from '../src/modules/index.routes.js'
 import cors from 'cors'
-import path from 'path'
 
 export const initApp = (app, express) => {
   app.get("/", (req, res) => {

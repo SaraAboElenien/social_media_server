@@ -194,22 +194,12 @@ export const updateAccount = asyncHandler(async (req, res, next) => {
   const user = req.user;
   const { firstName, lastName, email, bio } = req.body;
 
-  // Prepare the update object
   const updatedData = {};
 
-  // Update basic user fields
   if (firstName) updatedData.firstName = firstName;
   if (lastName) updatedData.lastName = lastName;
   if (bio) updatedData.bio = bio;
 
-  // // Handle email update
-  // if (email) {
-  //   const emailExists = await userModel.findOne({ email: email.toLowerCase() });
-  //   if (emailExists && emailExists._id.toString() !== user._id.toString()) {
-  //     return next(new AppError('Email is already in use!', 400));
-  //   }
-  //   updatedData.email = email.toLowerCase();
-  // }
 
   if (req.uploadedImage) {
     try {
@@ -217,7 +207,6 @@ export const updateAccount = asyncHandler(async (req, res, next) => {
         await cloudinary.uploader.destroy(user.profileImage.public_id);
       }
 
-      // Set the new image details
       const { secure_url, public_id } = req.uploadedImage;
       user.profileImage = { secure_url, public_id };
     } catch (error) {
@@ -225,12 +214,10 @@ export const updateAccount = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Save updated user data
   const updatedUser = await user.save();
   if (!updatedUser) {
     return next(new AppError("Failed to update user profile", 500));
   }
-  // Update the user document in the database
   try {
     const updatedUser = await userModel.findByIdAndUpdate(user._id, updatedData, {
       new: true,
@@ -241,16 +228,13 @@ export const updateAccount = asyncHandler(async (req, res, next) => {
       return next(new AppError('User not found!', 404));
     }
 
-    // Exclude sensitive fields from the response
     const { password, confirmed, loggedIn, role, ...userDetails } = updatedUser.toObject();
 
-    // Respond with the updated user data
     res.status(200).json({
       message: 'Your account updated successfully <3',
       user: userDetails,
     });
   } catch (error) {
-    console.error('Error updating user profile:', error.message);
     return next(new AppError('Failed to update user profile. Please try again.', 500));
   }
 });

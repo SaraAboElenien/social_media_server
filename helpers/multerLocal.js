@@ -27,8 +27,6 @@
 
 import multer from "multer";
 import { v2 as cloudinary } from 'cloudinary';
-import { nanoid } from 'nanoid';
-import path from "path";
 
 
 const multerFileFilter = (req, file, cb) => {
@@ -51,7 +49,6 @@ export const uploadImage = (fieldName) => {
 };
 
 export const handleCloudinaryUpload = async (req, res, next) => {
-  console.log('req.file:', req.file); 
   if (!req.file) {
     return next(new Error('Image field is required!'));
   }
@@ -69,7 +66,6 @@ export const handleCloudinaryUpload = async (req, res, next) => {
     const uploadResult = await cloudinary.uploader.upload(dataURI, {
         folder: folderName
       });
-    console.log('Cloudinary Upload Result:', uploadResult);
 
 
     req.uploadedImage = {

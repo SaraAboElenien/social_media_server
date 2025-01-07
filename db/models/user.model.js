@@ -24,13 +24,13 @@ const userSchema = new mongoose.Schema(
       secure_url: {
         type: String,
         default:
-          "https://res.cloudinary.com/deosyyprn/image/upload/v1735830964/profile-placeholder_mwdkqx",
+          process.env.defaultProfilePic,
 
 
       },
       public_id: {
         type: String,
-        default: "profile-placeholder_mwdkqx", 
+        default: process.env.defaultpuplicPic, 
       },
     },
     followersCount: { type: Number, default: 0 },
