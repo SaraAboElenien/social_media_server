@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema(
         default:
           process.env.defaultProfilePic,
 
-
       },
       public_id: {
         type: String,
