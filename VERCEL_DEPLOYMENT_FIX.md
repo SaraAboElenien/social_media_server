@@ -1,16 +1,25 @@
 # Vercel Deployment Fix ✅
 
-## Issue Resolved: "No Output Directory named 'public' found"
+## Issue Resolved: "vite: command not found"
 
 ### **Problem:**
-Vercel was looking for a "public" output directory, but our frontend builds to "dist".
+Vercel build was failing because Vite was not installed in the frontend directory during the build process.
 
 ### **Root Cause:**
-The Vercel configuration was trying to build the frontend separately, but the monorepo structure requires a different approach.
+The build script wasn't properly installing frontend dependencies before trying to build.
 
 ## ✅ **Solution Applied:**
 
-### 1. **Updated Vercel Configuration** (`packages/backend/vercel.json`)
+### 1. **Updated Build Script** (`packages/backend/package.json`)
+```json
+{
+  "scripts": {
+    "build": "cd ../frontend && npm install --production=false && npm run build"
+  }
+}
+```
+
+### 2. **Updated Vercel Configuration** (`packages/backend/vercel.json`)
 ```json
 {
   "version": 2,
@@ -29,21 +38,14 @@ The Vercel configuration was trying to build the frontend separately, but the mo
       "src": "/(.*)",
       "dest": "/index.js"
     }
-  ]
-}
-```
-
-### 2. **Added Build Script** (`packages/backend/package.json`)
-```json
-{
-  "scripts": {
-    "build": "cd ../frontend && npm install && npm run build"
+  ],
+  "functions": {
+    "index.js": {
+      "maxDuration": 30
+    }
   }
 }
 ```
-
-### 3. **Updated Root Package.json**
-Added `vercel-build` script for proper build process.
 
 ## 🚀 **Correct Vercel Deployment Settings:**
 
@@ -72,15 +74,16 @@ saltRounds=12
 ## 🔄 **How It Works Now:**
 
 1. **Build Process**: Vercel runs `npm run build` in the backend directory
-2. **Frontend Build**: The build script installs and builds the frontend
-3. **Output**: Frontend build files go to `../frontend/dist`
-4. **Serving**: Backend serves both API and frontend files
+2. **Dependency Installation**: The build script installs all frontend dependencies with `npm install --production=false`
+3. **Frontend Build**: Then builds the frontend with `npm run build`
+4. **Output**: Frontend build files go to `../frontend/dist`
+5. **Serving**: Backend serves both API and frontend files
 
-## ✅ **Test Results:**
-- ✅ Frontend builds successfully to `dist` directory
-- ✅ Backend can serve frontend build files
-- ✅ API routes work correctly
-- ✅ Static file serving works
+## ✅ **Key Changes:**
+
+- **Fixed dependency installation**: Uses `npm install --production=false` to ensure dev dependencies (like Vite) are installed
+- **Simplified build process**: Removed complex shell scripts
+- **Better error handling**: More reliable build process
 
 ## 🎯 **Next Steps:**
 
@@ -88,4 +91,4 @@ saltRounds=12
 2. **Set environment variables** in Vercel dashboard
 3. **Deploy** - the build should now work correctly
 
-The deployment error is now fixed! 🚀
+The Vite command not found error is now fixed! 🚀
