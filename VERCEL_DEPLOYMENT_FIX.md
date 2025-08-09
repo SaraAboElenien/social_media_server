@@ -10,37 +10,37 @@ The build script wasn't properly installing frontend dependencies before trying 
 
 ## ✅ **Solution Applied:**
 
-### 1. **Updated Build Script** (`packages/backend/package.json`)
+### 1. **Updated Root Package.json** (`package.json`)
 ```json
 {
   "scripts": {
-    "build": "cd ../frontend && npm install --production=false && npm run build"
+    "vercel-build": "cd packages/frontend && npm install --production=false && npm run build"
   }
 }
 ```
 
-### 2. **Updated Vercel Configuration** (`packages/backend/vercel.json`)
+### 2. **Created Root Vercel Configuration** (`vercel.json`)
 ```json
 {
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "packages/backend/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/index.js"
+      "dest": "/packages/backend/index.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.js"
+      "dest": "/packages/backend/index.js"
     }
   ],
   "functions": {
-    "index.js": {
+    "packages/backend/index.js": {
       "maxDuration": 30
     }
   }
@@ -51,9 +51,9 @@ The build script wasn't properly installing frontend dependencies before trying 
 
 ### **Project Settings in Vercel Dashboard:**
 - **Framework Preset**: Node.js
-- **Root Directory**: `packages/backend`
-- **Build Command**: `npm run build`
-- **Output Directory**: `../frontend/dist`
+- **Root Directory**: `/` (root of monorepo)
+- **Build Command**: `npm run vercel-build`
+- **Output Directory**: `packages/frontend/dist`
 - **Install Command**: `npm install`
 
 ### **Environment Variables Required:**
@@ -73,21 +73,24 @@ saltRounds=12
 
 ## 🔄 **How It Works Now:**
 
-1. **Build Process**: Vercel runs `npm run build` in the backend directory
+1. **Build Process**: Vercel runs `npm run vercel-build` from the root directory
 2. **Dependency Installation**: The build script installs all frontend dependencies with `npm install --production=false`
 3. **Frontend Build**: Then builds the frontend with `npm run build`
-4. **Output**: Frontend build files go to `../frontend/dist`
+4. **Output**: Frontend build files go to `packages/frontend/dist`
 5. **Serving**: Backend serves both API and frontend files
 
 ## ✅ **Key Changes:**
 
+- **Root-level configuration**: Vercel now uses the root directory instead of packages/backend
 - **Fixed dependency installation**: Uses `npm install --production=false` to ensure dev dependencies (like Vite) are installed
-- **Simplified build process**: Removed complex shell scripts
-- **Better error handling**: More reliable build process
+- **Simplified build process**: More reliable and easier to debug
+- **Better error handling**: Clearer build process
 
 ## 🎯 **Next Steps:**
 
-1. **Update Vercel project settings** with the correct configuration
+1. **Update Vercel project settings** with the correct configuration:
+   - **Root Directory**: `/` (root of monorepo)
+   - **Build Command**: `npm run vercel-build`
 2. **Set environment variables** in Vercel dashboard
 3. **Deploy** - the build should now work correctly
 
