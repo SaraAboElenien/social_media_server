@@ -18,7 +18,7 @@ export const sendEmail = async (to, subject, html, attachments = [] ) => {
         html: html? html: "HelloHelloHello",
         attachments
     });
-    console.log(info);
+
     if (info.accepted.length) {
         return true;
     } else {

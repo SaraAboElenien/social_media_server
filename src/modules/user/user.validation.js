@@ -10,11 +10,12 @@ export const signupValidationSchema = {
 }),
 };
 
-export const signinValidationSchema = joi.object({
-    email: joi.string().email().required(),
-    password: joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'))
-        .min(8).required(),
-});
+export const signinValidationSchema = {
+    body: joi.object({
+        email: joi.string().email().required(),
+        password: joi.string().min(8).required(),
+    })
+};
 
 export const updatePasswordSchema = joi.object({
     oldPassword: joi.string().required(),

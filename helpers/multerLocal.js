@@ -50,23 +50,22 @@ export const uploadImage = (fieldName) => {
 
 export const handleCloudinaryUpload = async (req, res, next) => {
   if (!req.file) {
-    return next(new Error('Image field is required!'));
+    return next(); // Continue without uploading if no file provided
   }
 
   try {
     const b64 = Buffer.from(req.file.buffer).toString('base64');
     const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
-  const folderName = req.file.fieldname === 'profileImage' 
-    ? 'SocialMedia/Users/ProfileImages'
-    : req.file.fieldname === 'postImage'
-    ? 'SocialMedia/Posts'
-    : 'SocialMedia/Other';
+    const folderName = req.file.fieldname === 'profileImage' 
+      ? 'SocialMedia/Users/ProfileImages'
+      : req.file.fieldname === 'postImage'
+      ? 'SocialMedia/Posts'
+      : 'SocialMedia/Other';
 
     const uploadResult = await cloudinary.uploader.upload(dataURI, {
         folder: folderName
       });
-
 
     req.uploadedImage = {
       secure_url: uploadResult.secure_url,
@@ -77,4 +76,12 @@ export const handleCloudinaryUpload = async (req, res, next) => {
   } catch (error) {
     next(new Error(`Upload failed: ${error.message}`));
   }
+};
+
+export const handleRequiredCloudinaryUpload = async (req, res, next) => {
+  if (!req.file) {
+    return next(new Error('Image field is required!'));
+  }
+  
+  return handleCloudinaryUpload(req, res, next);
 };

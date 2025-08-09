@@ -26,10 +26,12 @@ const userSchema = new mongoose.Schema(
         default:
           process.env.defaultProfilePic,
 
+
       },
+
       public_id: {
         type: String,
-        default: process.env.defaultpuplicPic, 
+        default: process.env.defaultPublicPic, 
       },
     },
     followersCount: { type: Number, default: 0 },
@@ -70,5 +72,7 @@ const userSchema = new mongoose.Schema(
 );
 
 const userModel = mongoose.model("User", userSchema);
+
+
 
 export default userModel;

@@ -28,7 +28,7 @@ export class ApiFeatures {
   
       const filterObj = JSON.parse(queryStr);
   
-      this.mongooseQuery.find(filterObj); 
+      this.mongooseQuery.where(filterObj); 
       return this;
     }
   

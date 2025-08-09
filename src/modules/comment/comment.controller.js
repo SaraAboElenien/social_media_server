@@ -1,5 +1,5 @@
 import commentModel from '../../../db/models/comment.model.js'; 
-import { asyncHandler } from '../../../helpers/globleErrorHandling.js'; 
+import { asyncHandler } from '../../../helpers/globalErrorHandling.js'; 
 import { AppError } from '../../../helpers/classError.js';
 import postModel from '../../../db/models/post.model.js';
 import notificationModel from '../../../db/models/notification.model.js';

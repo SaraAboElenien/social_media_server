@@ -1,6 +1,6 @@
 import { connection } from '../db/connection.js'
 import { AppError } from '../helpers/classError.js'
-import { globleErrorHandling } from '../helpers/globleErrorHandling.js'
+import { globalErrorHandling } from '../helpers/globalErrorHandling.js'
 import { deleteFromCloudinary } from '../helpers/deleteFromCloudinary.js'
 import { deleteFromDB } from '../helpers/deleteFromDB.js'
 import * as routers from '../src/modules/index.routes.js'
@@ -37,13 +37,12 @@ export const initApp = (app, express) => {
   // app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));  
   app.use('/api/v1/auth/user', routers.userRoutes)
   app.use('/api/v1/auth/post', routers.postRoutes)
-  app.use('/api/v1/auth/post/:postId/comment', routers.commentRoutes);
+  app.use('/api/v1/auth/comment', routers.commentRoutes);
   app.use('/api/v1/auth/notification', routers.notificationRoutes);
   
-  app.get('*', (req, res, next) => {
+  app.get(/(.*)/, (req, res, next) => {
     const err = new AppError(`Invalid URL${req.originalUrl}`, 404)
     next(err)
-  })
-  
-  app.use(globleErrorHandling, deleteFromCloudinary, deleteFromDB)
+  })  
+  app.use(globalErrorHandling, deleteFromCloudinary, deleteFromDB)
 }

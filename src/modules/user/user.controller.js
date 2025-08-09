@@ -4,7 +4,7 @@ import userModel from '../../../db/models/user.model.js';
 import { sendEmail } from '../../../helpers/sendEmail.js';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
-import { asyncHandler } from '../../../helpers/globleErrorHandling.js';
+import { asyncHandler } from '../../../helpers/globalErrorHandling.js';
 import { AppError } from '../../../helpers/classError.js';
 import path from 'path'
 import fs from 'fs';
@@ -130,7 +130,7 @@ export const signIn = asyncHandler(async (req, res, next) => {
     }
 
     const token = sign({ id: user._id, email, role: user.role }, process.env.confirmationKey);
-    user.loggedIn = 'true';
+    user.loggedIn = true;
     await user.save();
 
     res.json({
@@ -140,8 +140,9 @@ export const signIn = asyncHandler(async (req, res, next) => {
         user: {
             id: user._id,
             email: user.email,
-            name: user.name,
-            // Add other necessary fields
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profileImage: user.profileImage
         },
     });
 });
@@ -167,13 +168,13 @@ export const listUsers = asyncHandler(async (req, res, next) => {
 // This is the user Profile //
 export const userByID = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    console.log('Received ID:', id); 
+ 
     const user = await userModel.findById(id).select('-password');
     if (!user) {
         return next(new AppError("Could not retrieve user!", 400)); 
     }
     res.status(200).json(user); 
-    console.log('User found:', user);
+
 });
 
 
@@ -214,18 +215,14 @@ export const updateAccount = asyncHandler(async (req, res, next) => {
     }
   }
 
-  const updatedUser = await user.save();
-  if (!updatedUser) {
-    return next(new AppError("Failed to update user profile", 500));
-  }
+  // Apply the updates to the user object
+  Object.assign(user, updatedData);
+  
   try {
-    const updatedUser = await userModel.findByIdAndUpdate(user._id, updatedData, {
-      new: true,
-      runValidators: true,
-    });
-
+    const updatedUser = await user.save();
+    
     if (!updatedUser) {
-      return next(new AppError('User not found!', 404));
+      return next(new AppError('Failed to update user profile', 500));
     }
 
     const { password, confirmed, loggedIn, role, ...userDetails } = updatedUser.toObject();
@@ -299,11 +296,7 @@ export const followUser = asyncHandler(async (req, res, next) => {
         followersCount: targetUser.followers.length,
       });
     } catch (error) {
-      console.error("Error updating follow status:", error);
-      res.status(500).json({
-        message: "error",
-        err: "Error updating follow status",
-      });
+      return next(new AppError("Error updating follow status", 500));
     }
   });
   

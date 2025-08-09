@@ -30,7 +30,7 @@ export const auth = (role = []) => {
                 return res.status(403).json({ message: "Token expired, please login again!" });
             }
 
-            if (!role.includes(user.role)) {
+            if (role.length > 0 && !role.includes(user.role)) {
                 return res.status(401).json({ message: "Sorry! You're not authorized." });
             }
 

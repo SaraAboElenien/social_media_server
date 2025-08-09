@@ -9,15 +9,15 @@ const router = express.Router({ mergeParams: true })
 
 // create Comment
 router.post(
-  '/add',
+  '/:postId/add',
   auth(systemRoles.user),
   validation(CV.createCommentValidationSchema),
   CC.createComment
 )
 
-// Eidt Comment
+// Edit Comment
 router.put(
-  '/edit/:commentId',
+  '/:postId/edit/:commentId',
   auth(systemRoles.user),
   validation(CV.editCommentValidationSchema),
   CC.updateComment
@@ -25,7 +25,7 @@ router.put(
 
 // delete Comment 
 router.delete(
-  '/:commentId',
+  '/:postId/:commentId',
   auth(systemRoles.user),
   validation(CV.deleteCommentValidationSchema),
   CC.deleteComment
@@ -34,7 +34,7 @@ router.delete(
 
 // Get Comments for a Post
 router.get(
-  '/',
+  '/:postId',
   auth(systemRoles.user), 
   validation(CV.getCommentsValidationSchema), 
   CC.getComments
@@ -42,7 +42,7 @@ router.get(
 
 // Reply to a Comment
 router.post(
-  "/:commentId/reply",
+  "/:postId/:commentId/reply",
   auth(systemRoles.user),
   validation(CV.replyToCommentValidationSchema),
   CC.replyToComment
@@ -51,7 +51,7 @@ router.post(
 
 // Like or Unlike a Comment
 router.patch(
-  "/:commentId/like",
+  "/:postId/:commentId/like",
   auth(systemRoles.user),
   validation(CV.likeCommentValidationSchema),
   CC.likeComment

@@ -1,5 +1,5 @@
 import postModel from "../../../db/models/post.model.js";
-import { asyncHandler } from "../../../helpers/globleErrorHandling.js";
+import { asyncHandler } from "../../../helpers/globalErrorHandling.js";
 import { AppError } from "../../../helpers/classError.js";
 import userModel from "../../../db/models/user.model.js";
 import { ApiFeatures } from "../../../helpers/ApiFeatures.js";
