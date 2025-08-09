@@ -26,16 +26,15 @@ Since you now have a monorepo, you should **remove the separate frontend reposit
 2. **Build Settings**:
    - **Framework Preset**: Node.js
    - **Root Directory**: `packages/backend`
-   - **Build Command**: `cd ../.. && npm run build && cd packages/backend`
+   - **Build Command**: `npm run build`
    - **Output Directory**: `../frontend/dist`
-   - **Install Command**: `npm run install:all`
+   - **Install Command**: `npm install`
 
 3. **Environment Variables**: Add all your backend environment variables in Vercel dashboard
 
 ### 3. Vercel Configuration
-The `packages/backend/vercel.json` is already configured to:
+The `packages/backend/vercel.json` is configured to:
 - Build the backend API
-- Build the frontend
 - Route API calls to backend
 - Serve frontend files for all other routes
 
@@ -66,6 +65,9 @@ CLOUDINARY_API_SECRET=your_cloudinary_secret
 EMAIL_USER=your_email
 EMAIL_PASS=your_email_password
 NODE_ENV=production
+confirmationKey=your_confirmation_key
+confirmationKeyRefresher=your_refresh_key
+saltRounds=12
 ```
 
 ### Frontend (.env in Vercel - if separate deployment)
